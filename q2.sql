@@ -32,8 +32,7 @@ DROP VIEW IF EXISTS wins_per_party CASCADE;
 
 create view wins_per_party as
 select w.party_id, count(p.country_id) as party_wins
-from winning_party w right join party p
-where w.party_id = p.id
+from winning_party w right join party p on w.party_id = p.id
 group by w.party_id; 
 
 select w.party_id, count(p.country_id) as party_wins
