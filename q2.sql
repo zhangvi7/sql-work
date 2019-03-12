@@ -65,7 +65,7 @@ where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win;
 
 select w.country_id, w.party_wins, w.party_id
 from wins_per_party w, avg_wins_country a
-where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win;
+where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
 
 -- create view with_country_name as
 -- select c.name as countryName, w.party_wins , w.party_id
