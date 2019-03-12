@@ -71,3 +71,6 @@ FROM ((SELECT winner.party_id, MAX(election.e_date) AS mostRecentlyWonElectionDa
 insert into q2 
 SELECT a.countryName,a.partyName,a.partyFamily,a.wonElections, m.mostRecentlyWonElectionId,EXTRACT(year FROM m.mostRecentlyWonElectionDate ) AS mostRecentlyWonElectionYear 
 FROM answer_without_two_attributes a JOIN most_recent_won m ON a.party_id = m.party_id;
+
+SELECT a.countryName,a.partyName,a.partyFamily,a.wonElections, m.mostRecentlyWonElectionId,EXTRACT(year FROM m.mostRecentlyWonElectionDate ) AS mostRecentlyWonElectionYear 
+FROM answer_without_two_attributes a JOIN most_recent_won m ON a.party_id = m.party_id;
