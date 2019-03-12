@@ -46,7 +46,7 @@ group by w.country_id;
 -- create view won_more_3x as
 select w.country_id, w.party_wins, w.id
 from wins_per_party w, avg_wins_country a
-where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win) 
+where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
      
 -- --6) Find most recently won election id/year for each party
 -- create view most_recent_date as
