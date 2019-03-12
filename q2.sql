@@ -47,18 +47,18 @@ select p.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
 from wins_per_party w right join party p on w.party_id = p.id
 group by p.country_id;
 
+--4) Find parties that won more than 3 x average win per country 
+DROP VIEW IF EXISTS won_more_3x CASCADE;
+create view won_more_3x as
+select w.country_id, w.party_wins, w.party_id
+from wins_per_party w join avg_wins_country a on
+w.country_id = a.country_id 
+where 3 * (a.country_avg_win) < w.party_wins;
 
-select p.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
-from wins_per_party w right join party p on w.party_id = p.id
-group by p.country_id;
-
-
--- --4) Find parties that won more than 3 x average win per country 
--- DROP VIEW IF EXISTS won_more_3x CASCADE;
--- create view won_more_3x as
--- select w.country_id, w.party_wins, w.party_id
--- from wins_per_party w, avg_wins_country a
--- where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
+select w.country_id, w.party_wins, w.party_id
+from wins_per_party w join avg_wins_country a on
+w.country_id = a.country_id 
+where 3 * (a.country_avg_win) < w.party_wins;
 
 -- select w.country_id, w.party_wins, w.party_id
 -- from wins_per_party w, avg_wins_country a
