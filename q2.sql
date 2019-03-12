@@ -63,13 +63,14 @@ create view most_recent_id as
 select m.party_id, m.mostRecentlyWonElectionDate, e.id as mostRecentlyWonElectionId
 from most_recent_date m, election e
 where m.id = e.id; 
+
 --5) insert into table
-insert into q3
+-- insert into q3
 select c.name as countryName, 
     a.name as partyName, 
     a.family as partyFamily,
     a.party_wins as wonElections,
-    m.mostRecentlyWonElectionDate as mostRecentlyWonElectionDate
+    m.mostRecentlyWonElectionDate as mostRecentlyWonElectionDate,
     m.mostRecentlyWonElectionId as mostRecentlyWonElectionId
 from ans a, country c, most_recent_id m
 where a.country_id = c.id, a.id = m.party_id;
