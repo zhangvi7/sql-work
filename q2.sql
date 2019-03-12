@@ -29,73 +29,68 @@ where e.election_id = w.election_id and e.votes = w.max_votes and
       e.party_id = p.id;
 --2) Using all winning parties in election, find number of wins per party
 DROP VIEW IF EXISTS wins_per_party CASCADE;
-create view wins_per_party as
-select w.country_id, w.party_id, count(*) as party_wins
-from winning_party w
-group by w.party_id, w.country_id;
 
-select w.country_id, w.party_id, count(*) as party_wins
-from winning_party w
-group by w.party_id, w.country_id;
+create view wins_per_party as
+select w.party_id, count(p.country_id) as party_wins
+from winning_party w right join party p
+where w.party_id = p.id
+group by w.party_id; 
+
+select w.party_id, count(p.country_id) as party_wins
+from winning_party w right join party p
+where w.party_id = p.id
+group by w.party_id; 
+
+CREATE VIEW num_win AS
+SELECT w.party_id, p.country_id, w.party_wins
+FROM wins_per_party w LEFT JOIN party p ON party.id= w.party_id;
+
+SELECT w.party_id, p.country_id, w.party_wins
+FROM wins_per_party w LEFT JOIN party p ON party.id= w.party_id;
 
 -- 3)average number of winning elections of parties of the same country
 
-DROP VIEW IF EXISTS avg_wins_country CASCADE;
-create view avg_wins_country as
-select w.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
-from wins_per_party w
-group by w.country_id;
+-- DROP VIEW IF EXISTS avg_wins_country CASCADE;
+-- create view avg_wins_country as
+-- select w.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
+-- from wins_per_party w
+-- group by w.country_id;
 
-select w.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
-from wins_per_party w
-group by w.country_id;
+-- select w.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
+-- from wins_per_party w
+-- group by w.country_id;
 
---4) Find parties that won more than 3 x average win per country 
-DROP VIEW IF EXISTS won_more_3x CASCADE;
-create view won_more_3x as
-select w.country_id, w.party_wins, w.party_id
-from wins_per_party w, avg_wins_country a
-where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
+-- --4) Find parties that won more than 3 x average win per country 
+-- DROP VIEW IF EXISTS won_more_3x CASCADE;
+-- create view won_more_3x as
+-- select w.country_id, w.party_wins, w.party_id
+-- from wins_per_party w, avg_wins_country a
+-- where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
 
-select w.country_id, w.party_wins, w.party_id
-from wins_per_party w, avg_wins_country a
-where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
+-- select w.country_id, w.party_wins, w.party_id
+-- from wins_per_party w, avg_wins_country a
+-- where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
      
---5) Find most recently won election id/year for each party
-DROP VIEW IF EXISTS most_recent_date CASCADE;
-create view most_recent_date as
-select w.party_id, max(e.e_date) as mostRecentlyWonElectionDate, e.id as mostRecentlyWonElectionId
-from winning_party w, election e 
-where w.election_id = e.id 
-group by w.party_id, e.id; 
+-- --5) Find most recently won election id/year for each party
+-- DROP VIEW IF EXISTS most_recent_date CASCADE;
+-- create view most_recent_date as
+-- select w.party_id, max(e.e_date) as mostRecentlyWonElectionDate, e.id as mostRecentlyWonElectionId
+-- from winning_party w, election e 
+-- where w.election_id = e.id 
+-- group by w.party_id, e.id; 
 
---find party family and name
-DROP VIEW IF EXISTS win_name CASCADE;
-create view win_name as
-select w.country_id, w.party_wins, w.party_id, p.name
-from won_more_3x w, party p
-where w.party_id = p.id;
+-- --find party family and name
+-- DROP VIEW IF EXISTS win_name CASCADE;
+-- create view win_name as
+-- select w.country_id, w.party_wins, w.party_id, p.name
+-- from won_more_3x w, party p
+-- where w.party_id = p.id;
 
-DROP VIEW IF EXISTS win_family CASCADE;
-create view win_family as
-select w.country_id, w.party_wins, w.party_id, w.name, p.family
-from win_name w left join party_family p on w.party_id = p.party_id;
+-- DROP VIEW IF EXISTS win_family CASCADE;
+-- create view win_family as
+-- select w.country_id, w.party_wins, w.party_id, w.name, p.family
+-- from win_name w left join party_family p on w.party_id = p.party_id;
 
 
-insert into q3
-select c.name as countryName, 
-    w.name as partyName, 
-    w.family as partyFamily,
-    w.party_wins as wonElections,
-    m.mostRecentlyWonElectionId as mostRecentlyWonElectionId,
-    EXTRACT(year FROM m.mostRecentlyWonElectionDate ) AS mostRecentlyWonElectionYear  
-from win_family w natural join most_recent_date m natural join country c;
 
-select c.name as countryName, 
-    w.name as partyName, 
-    w.family as partyFamily,
-    w.party_wins as wonElections,
-    m.mostRecentlyWonElectionId as mostRecentlyWonElectionId,
-    EXTRACT(year FROM m.mostRecentlyWonElectionDate ) AS mostRecentlyWonElectionYear  
-from win_family w natural join most_recent_date m natural join country c;
 
