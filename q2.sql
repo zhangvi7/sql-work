@@ -32,7 +32,7 @@ where e.election_id = w.election_id and e.votes = w.max_votes and
 -- create view wins_per_party_without_country as
 select w.party_id as party_id, count(*) as party_wins, w.country_id
 from winning_party w
-group by w.party_id;
+group by w.party_id, w.country_id;
 
 -- create view wins_per_party as
 -- select w.party_id, w.party_wins, p.country_id
