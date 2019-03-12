@@ -59,23 +59,23 @@ GROUP BY party.country_id ;
 --4) Find parties that won more than 3 x average win per country 
 DROP VIEW IF EXISTS won_more_3x CASCADE;
 create view won_more_3x as
-select w.country_id, w.party_wins, w.party_id
+select w.country_id, w.party_id, w.party_wins
 from wins_per_party w, avg_wins_country a
 where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
 
-select w.country_id, w.party_wins, w.party_id
-from wins_per_party w, avg_wins_country a
-where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
+create view with_country_name as
+select c.name as countryName, w.party_wins, w.party_id
+from won_more_3x w, country c
+where w.country_id = c.id;
 
--- create view with_country_name as
--- select c.name as countryName, w.party_wins , w.party_id
--- from won_more_3x w, country c
--- where w.country_id = c.id;
+create view with_party_name as
+select w.countryName, p.name as partyName, w.party_wins as wonElections, w.party_id
+from with_country_name w, party p
+where w.party_id = p.id;
 
--- create view with_party_name as
--- select w.countryName, p.name as partyName, w.party_wins as wonElections, w.party_id
--- from with_country_name w, party p
--- where w.party_id = p.id;
+select w.countryName, p.name as partyName, w.party_wins as wonElections, w.party_id
+from with_country_name w, party p
+where w.party_id = p.id;
 
 -- create view with_party_family as
 -- select w.countryName, w.partyName, p.family as familyName, w.wonElections, w.party_id
