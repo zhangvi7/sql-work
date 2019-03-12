@@ -48,7 +48,7 @@ group by p.country_id;
 --4) Find parties that won more than 3 x average win per country 
 -- DROP VIEW IF EXISTS ans CASCADE;
 create view ans as
-select w.country_id, w.name, p.family, w.party_wins. w.id
+select w.country_id, w.name, p.family, w.party_wins, w.id
 from wins_per_party w, avg_wins_country a, party_family p
 where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win) 
       and w.id = p.party_id;
