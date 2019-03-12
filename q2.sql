@@ -35,13 +35,18 @@ CREATE VIEW country_avg_win AS
 SELECT party.country_id, (sum(num_win.num_of_winning)/count(party.id) )AS average 
 FROM num_win RIGHT JOIN party ON num_win.party_id = party.id GROUP BY party.country_id ;
 
+SELECT party.country_id, (sum(num_win.num_of_winning)/count(party.id) )AS average 
+FROM num_win RIGHT JOIN party ON num_win.party_id = party.id GROUP BY party.country_id ;
+
 --Find the party that that have won three times the average number of winning elections of parties of the same country
 drop view if exists answer_party cascade;
 CREATE VIEW answer_party AS
-SELECT n.party_id ,c.country_id FROM num_win n JOIN country_avg_win c ON n.country_id = c.country_id 
+SELECT n.party_id ,c.country_id 
+FROM num_win n JOIN country_avg_win c ON n.country_id = c.country_id 
 WHERE 3*(c.average) < n.num_of_winning ;
 
-SELECT n.party_id ,c.country_id FROM num_win n JOIN country_avg_win c ON n.country_id = c.country_id 
+SELECT n.party_id ,c.country_id
+ FROM num_win n JOIN country_avg_win c ON n.country_id = c.country_id 
 WHERE 3*(c.average) < n.num_of_winning ;
 
 -- select w.country_id, w.party_wins, w.party_id
