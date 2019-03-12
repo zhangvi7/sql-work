@@ -79,7 +79,8 @@ DROP VIEW IF EXISTS most_recent_date CASCADE;
 create view most_recent_date as
 select f.party_id, f.election_id as mostRecentlyWonElectionId, MAX(e.e_date) AS mostRecentlyWonElectionDate
 from find_election f, election e 
-where f.election_id = e.id;
+where f.election_id = e.id
+group by f.party_id;
 
 -- DROP VIEW IF EXISTS ans CASCADE;
 -- create view ans as
