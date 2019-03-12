@@ -1,7 +1,7 @@
 SET SEARCH_PATH TO parlgov;
-drop table if exists q3 cascade;
+drop table if exists q2 cascade;
 
-create table q3(
+create table q2(
        countryName VARCHaR(50),
        partyName VARCHaR(100),
        partyFamily VARCHaR(50),
