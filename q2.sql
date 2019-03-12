@@ -10,7 +10,7 @@ create table q3(
        mostRecentlyWonElectionYear INT
 ); 
 
--- Find parties that have won more than 3 times the average number of --winning elections of parties of the same country. 
+-- Find parties that have won more than 3 times the average number of winning elections of parties of the same country. 
 --Report the country name, party name and the party’s family name along with --the total number of elections it has won
 
 --1) Find all winning parties for an election:
@@ -34,7 +34,7 @@ select w.party_id as party_id, count(*) as party_wins
 from winning_party w
 group by w.party_id;
 
--- create view wins_per_party as
+create view wins_per_party as
 select w.party_id, w.party_wins, p.country_id
 from wins_per_party2 w, party p
 where w.party_id = p.id;
@@ -54,10 +54,9 @@ where w.party_id = p.id;
 --3) Find average number of winning elections of parties per country
 -- DROP VIEW IF EXISTS avg_wins_country CASCADE;
 -- create view avg_wins_country as
--- select p.country_id as country_id, (sum(w.party_wins) / count(p.id)) as country_avg_win
--- from wins_per_party w, party p
--- where w.party_id = p.id
--- group by p.country_id;
+select w.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
+from wins_per_party w
+group by w.country_id;
 
 -- --4) Find parties that won more than 3 x average win per country 
 -- -- DROP VIEW IF EXISTS won_more_3x CASCADE;
