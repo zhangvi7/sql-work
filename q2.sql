@@ -15,13 +15,13 @@ create table q3(
 
 --1) Find all winning parties for an election:
 -- 1) max votes for an election
--- DROP VIEW IF EXISTS winning_partys CASCADE;
+DROP VIEW IF EXISTS winning_partys CASCADE;
 create view winning_partys as
 select election_id, max(votes) as max_votes
 from election_result
 group by election_id;
 -- 2) find parties that win elections
--- DROP VIEW IF EXISTS winning_party CASCADE;
+DROP VIEW IF EXISTS winning_party CASCADE;
 create view winning_party as
 select p.id as party_id, p.country_id, e.election_id
 from election_result e, winning_partys w, party p
@@ -34,17 +34,18 @@ select w.country_id, w.party_id as party_id, count(*) as party_wins
 from winning_party w
 group by w.party_id, w.country_id;
 
-
+-- 3) find country avg win
+DROP VIEW IF EXISTS avg_wins_country CASCADE;
 select w.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
 from wins_per_party w
 group by w.country_id;
 
--- --4) Find parties that won more than 3 x average win per country 
--- -- DROP VIEW IF EXISTS won_more_3x CASCADE;
+--4) Find parties that won more than 3 x average win per country 
+-- DROP VIEW IF EXISTS won_more_3x CASCADE;
 -- create view won_more_3x as
--- select w.country_id, w.name, w.party_wins, w.id
--- from wins_per_party w, avg_wins_country a
--- where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win) 
+select w.country_id, w.party_wins, w.id
+from wins_per_party w, avg_wins_country a
+where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win) 
      
 -- --6) Find most recently won election id/year for each party
 -- create view most_recent_date as
