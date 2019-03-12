@@ -29,15 +29,15 @@ where e.election_id = w.election_id and e.votes = w.max_votes and
       e.party_id = p.id;
 --2) Using all winning parties in election, find number of wins per party
 -- DROP VIEW IF EXISTS wins_per_party CASCADE;
-create view wins_per_party2 as
-select w.party_id as party_id, count(*) as party_wins
+-- create view wins_per_party_without_country as
+select w.party_id as party_id, count(*) as party_wins, w.country_id
 from winning_party w
 group by w.party_id;
 
-create view wins_per_party as
-select w.party_id, w.party_wins, p.country_id as country_id
-from wins_per_party2 w, party p
-where w.party_id = p.id;
+-- create view wins_per_party as
+-- select w.party_id, w.party_wins, p.country_id
+-- from wins_per_party_without_country w, party p
+-- where w.party_id = p.id;
 -- create view wins_per_party as
 -- select w.party_id, w.party_wins, p.country_id
 -- from winning_party w, party p
@@ -54,9 +54,9 @@ where w.party_id = p.id;
 --3) Find average number of winning elections of parties per country
 -- DROP VIEW IF EXISTS avg_wins_country CASCADE;
 -- create view avg_wins_country as
-select wins_per_party.country_id, (sum(wins_per_party.party_wins) / count(wins_per_party.party_id)) as country_avg_win
-from wins_per_party
-group by wins_per_party.country_id;
+-- select wins_per_party.country_id, (sum(wins_per_party.party_wins) / count(wins_per_party.party_id)) as country_avg_win
+-- from wins_per_party
+-- group by wins_per_party.country_id;
 
 -- --4) Find parties that won more than 3 x average win per country 
 -- -- DROP VIEW IF EXISTS won_more_3x CASCADE;
