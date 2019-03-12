@@ -13,96 +13,61 @@ create table q3(
 -- Find parties that have won more than 3 times the average number of winning elections of parties of the same country. 
 --Report the country name, party name and the party’s family name along with --the total number of elections it has won
 
---1) Find all winning parties for an election:
--- 1) max votes for an election
-DROP VIEW IF EXISTS winning_partys CASCADE;
-create view winning_partys as
-select election_id, max(votes) as max_votes
-from election_result
-group by election_id;
--- 2) find parties that win elections
-DROP VIEW IF EXISTS winning_party CASCADE;
-create view winning_party as
-select p.id as party_id, p.country_id, e.election_id
-from election_result e, winning_partys w, party p
-where e.election_id = w.election_id and e.votes = w.max_votes and 
-      e.party_id = p.id;
---2) Using all winning parties in election, find number of wins per party
-DROP VIEW IF EXISTS wins_per_party CASCADE;
-create view wins_per_party as
-select w.country_id, w.party_id, count(*) as party_wins
-from winning_party w
-group by w.party_id, w.country_id;
 
-select w.country_id, w.party_id, count(*) as party_wins
-from winning_party w
-group by w.party_id, w.country_id;
+--Find the number of vote that win that election for each election
+CREATE VIEW winner_vote AS 
+SELECT election_id,max(votes)AS max_vote FROM election_result GROUP BY election_id;
 
--- 3)average number of winning elections of parties of the same country
+ --Find the party that wins the election for each election
+CREATE VIEW winner AS
+SELECT party.id AS party_id, party.country_id, election_result.election_id
+FROM (election_result NATURAL JOIN winner_vote )JOIN party ON party.id = election_result.party_id
+WHERE winner_vote.max_vote = election_result.votes ;
 
-DROP VIEW IF EXISTS avg_wins_country CASCADE;
-create view avg_wins_country as
-select w.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
-from wins_per_party w
-group by w.country_id;
+--Find the number of win for each party. For the party that does not win, set 0
+CREATE VIEW num_win AS
+SELECT num.party_id, party.country_id, num.num_of_winning
+FROM(SELECT winner.party_id , count(party.country_id) AS num_of_winning 
+FROM winner  RIGHT JOIN party ON winner.party_id = party.id GROUP BY party_id) num  LEFT JOIN party ON party.id= num.party_id;
 
-select w.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
-from wins_per_party w
-group by w.country_id;
+--Find the average number of winning elections of each country
+CREATE VIEW country_avg_win AS
+SELECT party.country_id, (sum(num_win.num_of_winning)/count(party.id) )AS average 
+FROM num_win RIGHT JOIN party ON num_win.party_id = party.id GROUP BY party.country_id ;
 
---4) Find parties that won more than 3 x average win per country 
-DROP VIEW IF EXISTS won_more_3x CASCADE;
-create view won_more_3x as
-select w.country_id, w.party_wins, w.party_id
-from wins_per_party w, avg_wins_country a
-where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
+--Find the party that that have won three times the average number of winning elections of parties of the same country
+CREATE VIEW answer_party AS
+SELECT n.party_id ,c.country_id FROM num_win n JOIN country_avg_win c ON n.country_id = c.country_id 
+WHERE 3*(c.average) < n.num_of_winning ;
 
-select w.country_id, w.party_wins, w.party_id
-from wins_per_party w, avg_wins_country a
-where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
-     
---5) Find most recently won election id/year for each party
-DROP VIEW IF EXISTS most_recent_date CASCADE;
-create view most_recent_date as
-select w.party_id, max(e.e_date) as mostRecentlyWonElectionDate, e.id as mostRecentlyWonElectionId
-from winning_party w, election e 
-where w.election_id = e.id
-group by w.party_id, e.id; 
+--Anwser except mostRecentlyWonElectionId and mostRecentlyWonElectionYear
+CREATE VIEW answer_without_five_attributes AS
+SELECT a.party_id,c.name AS countryName
+FROM answer_party a JOIN country c ON a.country_id=c.id;
 
---find party family and name
-DROP VIEW IF EXISTS win_name CASCADE;
-create view win_name as
-select w.country_id, w.party_wins, w.party_id, p.name
-from won_more_3x w, party p
-where w.party_id = p.id;
+CREATE VIEW answer_without_four_attributes AS
+SELECT a.party_id, a.countryName, p.name AS partyName
+FROM answer_without_five_attributes a JOIN party p ON a.party_id=p.id;
 
-DROP VIEW IF EXISTS win_family CASCADE;
-create view win_family as
-select w.country_id, w.party_wins, w.party_id, w.name, p.family
-from win_name w, party_family p
-where w.party_id = p.party_id;
+CREATE VIEW answer_without_three_attributes AS
+SELECT a.party_id,a.countryName, a.partyName, pf.family AS partyFamily
+FROM answer_without_four_attributes a LEFT JOIN party_family pf ON a.party_id=pf.party_id;
 
-select p.family
-from party_family p
-where p.party_id = 1539;
+CREATE VIEW answer_without_two_attributes AS
+SELECT a.party_id,a.countryName, a.partyName, a.partyFamily, n.num_of_winning AS wonElections
+FROM answer_without_three_attributes a JOIN num_win n ON a.party_id = n.party_id;
+
+--Find the most recentwon election for each party.
+CREATE VIEW most_recent_won AS
+SELECT recent.party_id,winner.election_id AS mostRecentlyWonElectionId, recent. mostRecentlyWonElectionDate
+FROM ((SELECT winner.party_id, MAX(election.e_date) AS mostRecentlyWonElectionDate
+     FROM winner LEFT JOIN election ON winner.election_id = election.id 
+     GROUP BY winner.party_id) recent JOIN winner ON recent.party_id = winner.party_id) 
+     JOIN election ON election.id = winner.election_id AND cast(recent.mostRecentlyWonElectionDate AS DATE) = election.e_date;
 
 
 
-
--- create view most_recent_id as
--- select m.party_id, m.mostRecentlyWonElectionDate, e.id as mostRecentlyWonElectionId
--- from most_recent_date m, election e
--- where m.id = e.id; 
-
---6) insert into table
--- insert into q3
--- select c.name as countryName, 
---     a.name as partyName, 
---     a.family as partyFamily,
---     a.party_wins as wonElections,
---     m.mostRecentlyWonElectionDate as mostRecentlyWonElectionDate,
---     m.mostRecentlyWonElectionId as mostRecentlyWonElectionId
--- from won_more_3x a, country c, most_recent_id m
--- where a.country_id = c.id and a.id = m.party_id;
-
---find party family name down here too using party_id
+-- the answer to the query
+insert into q2 
+SELECT a.countryName,a.partyName,a.partyFamily,a.wonElections, m.mostRecentlyWonElectionId,EXTRACT(year FROM m.mostRecentlyWonElectionDate ) AS mostRecentlyWonElectionYear 
+FROM answer_without_two_attributes a JOIN most_recent_won m ON a.party_id = m.party_id;
