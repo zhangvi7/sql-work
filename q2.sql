@@ -48,7 +48,7 @@ group by w.party_id;
 --         LEFT JOIN party ON party.id= num.party_id;
 --3) Find average number of winning elections of parties per country
 -- DROP VIEW IF EXISTS avg_wins_country CASCADE;
-create view avg_wins_country as
+-- create view avg_wins_country as
 select p.country_id, (sum(w.party_wins) / count(p.id)) as country_avg_win
 from wins_per_party w, party p
 where w.party_id = p.id
