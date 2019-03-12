@@ -77,24 +77,19 @@ where w.party_id = e.party_id;
 
 DROP VIEW IF EXISTS most_recent_date CASCADE;
 create view most_recent_date as
-select f.party_id, MAX(e.e_date) AS mostRecentlyWonElectionDate
+select f.party_id, MAX(e.e_date) AS max_date
 from find_election f, election e 
 where f.election_id = e.id
 group by f.party_id;
 
-
-DROP VIEW IF EXISTS find_election CASCADE;
-create view find_election as
-select w.party_id, e.election_id
-from with_party_family w, election_result e 
-where w.party_id = e.party_id;
-
 create view both as 
-select f.party_id, f.election_id as mostRecentlyWonElectionId, m.mostRecentlyWonElectionDate
+select f.party_id, f.election_id, m.max_date
 from find_election f, most_recent_date m;
 
-select f.party_id, f.election_id as mostRecentlyWonElectionId, m.mostRecentlyWonElectionDate
+select f.party_id, f.election_id, m.max_date
 from find_election f, most_recent_date m;
+
+
 -- DROP VIEW IF EXISTS ans CASCADE;
 -- create view ans as
 --insert into q3
