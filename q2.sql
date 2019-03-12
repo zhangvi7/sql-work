@@ -48,7 +48,7 @@ from wins_per_party w right join party p on w.party_id = p.id
 group by p.country_id;
 
 
-select w.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
+select p.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
 from wins_per_party w right join party p on w.party_id = p.id
 group by p.country_id;
 
