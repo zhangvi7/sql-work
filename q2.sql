@@ -48,13 +48,11 @@ FROM winning_party  RIGHT JOIN party ON winning_party.party_id = party.id GROUP 
 
 DROP VIEW IF EXISTS avg_wins_country CASCADE;
 create view avg_wins_country as
-select p.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
-from wins_per_party w right join party p on w.party_id = p.id
-group by p.country_id;
+SELECT party.country_id, (sum(wins_per_party.party_wins)/count(party.id) ) AS average 
+FROM wins_per_party RIGHT JOIN party ON wins_per_party.party_id = party.id GROUP BY party.country_id ;
 
-select p.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
-from wins_per_party w right join party p on w.party_id = p.id
-group by p.country_id;
+SELECT party.country_id, (sum(wins_per_party.party_wins)/count(party.id) ) AS average 
+FROM wins_per_party RIGHT JOIN party ON wins_per_party.party_id = party.id GROUP BY party.country_id ;
 --4) Find parties that won more than 3 x average win per country 
 -- DROP VIEW IF EXISTS won_more_3x CASCADE;
 -- create view won_more_3x as
