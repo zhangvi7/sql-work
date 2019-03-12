@@ -59,18 +59,15 @@ select c.name as countryName, w.party_wins , w.party_id
 from won_more_3x w, country c
 where w.country_id = c.id;
 
-select c.name as countryName, w.party_wins , w.party_id
-from won_more_3x w, country c
-where w.country_id = c.id;
-
 create view with_party_name as
 select w.countryName, p.name as partyName, w.party_wins as wonElections, w.party_id
 from with_country_name w, party p
 where w.party_id = p.id;
 
-select w.countryName, p.name as partyName, w.party_wins as wonElections, w.party_id
-from with_country_name w, party p
-where w.party_id = p.id;
+create view with_party_family as
+select w.countryName, p.name as partyName, p.family as familyName, w.party_wins as wonElections, w.party_id
+from with_party_name w right join party_family p on 
+w.party_id = p.id;
 
 
 -- select w.country_id, w.party_wins, w.party_id
