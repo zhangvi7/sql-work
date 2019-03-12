@@ -57,7 +57,7 @@ create view most_recent_date as
 select p.id as party_id, max(e.e_date) as mostRecentlyWonElectionDate, e.id
 from wins_per_party p, election e 
 where p.election_id = e.id
-group by p.id; 
+group by p.id, e.id; 
 
 create view most_recent_id as
 select m.party_id, m.mostRecentlyWonElectionDate, e.id as mostRecentlyWonElectionId
