@@ -82,9 +82,9 @@ select w.country_id, w.party_wins, w.party_id, w.name, p.family
 from win_name w, party_family p
 where w.party_id = p.party_id;
 
-select w.country_id, w.party_wins, w.party_id, w.name, p.family
-from win_name w, party_family p
-where w.party_id = p.party_id;
+select p.family
+from party_family p
+where p.party_id = 1539;
 
 
 
