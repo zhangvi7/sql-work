@@ -69,22 +69,26 @@ select w.countryName, w.partyName, p.family as familyName, w.wonElections, w.par
 from with_party_name w right join party_family p on 
 w.party_id = p.party_id;
 
-select w.countryName, w.partyName, p.family as familyName, w.wonElections, w.party_id
-from with_party_name w left join party_family p on 
-w.party_id = p.party_id;
+DROP VIEW IF EXISTS find_election CASCADE;
+create view find_election as
+select w.party_id, e.election_id
+from with_party_family w, election_result e 
+where w.party_id = e.party_id;
+
+DROP VIEW IF EXISTS most_recent_date CASCADE;
+create view most_recent_date as
+select f.party_id, f.election_id as mostRecentlyWonElectionId, MAX(e.e_date) AS mostRecentlyWonElectionDate
+from find_election f, election e 
+where f.election_id = e.id;
+
+-- DROP VIEW IF EXISTS ans CASCADE;
+-- create view ans as
+--insert into q3
+select  w.countryName, w.partyName,w.familyName, w.wonElections, m.mostRecentlyWonElectionId, EXTRACT(year FROM m.mostRecentlyWonElectionDate ) AS mostRecentlyWonElectionYear 
+from most_recent_date m, with_party_family w;
 
 
--- select w.country_id, w.party_wins, w.party_id
--- from wins_per_party w, avg_wins_country a
--- where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
-     
--- --5) Find most recently won election id/year for each party
--- DROP VIEW IF EXISTS most_recent_date CASCADE;
--- create view most_recent_date as
--- select w.party_id, max(e.e_date) as mostRecentlyWonElectionDate, e.id as mostRecentlyWonElectionId
--- from winning_party w, election e 
--- where w.election_id = e.id 
--- group by w.party_id, e.id; 
+
 
 -- --find party family and name
 -- DROP VIEW IF EXISTS win_name CASCADE;
