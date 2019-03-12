@@ -66,7 +66,7 @@ DROP VIEW IF EXISTS most_recent_date CASCADE;
 create view most_recent_date as
 select w.party_id, max(e.e_date) as mostRecentlyWonElectionDate, e.id as mostRecentlyWonElectionId
 from winning_party w, election e 
-where w.election_id = e.id
+where w.election_id = e.id 
 group by w.party_id, e.id; 
 
 --find party family and name
@@ -83,11 +83,19 @@ from win_name w left join party_family p on w.party_id = p.party_id;
 
 
 insert into q3
-select w.name as countryName, 
+select c.name as countryName, 
     w.name as partyName, 
     w.family as partyFamily,
     w.party_wins as wonElections,
-    m.mostRecentlyWonElectionDate as mostRecentlyWonElectionDate,
-    m.mostRecentlyWonElectionId as mostRecentlyWonElectionId
-from win_family w natural join most_recent_date m
+    m.mostRecentlyWonElectionId as mostRecentlyWonElectionId,
+    EXTRACT(year FROM m.mostRecentlyWonElectionDate ) AS mostRecentlyWonElectionYear  
+from win_family w natural join most_recent_date m natural join country c;
+
+select c.name as countryName, 
+    w.name as partyName, 
+    w.family as partyFamily,
+    w.party_wins as wonElections,
+    m.mostRecentlyWonElectionId as mostRecentlyWonElectionId,
+    EXTRACT(year FROM m.mostRecentlyWonElectionDate ) AS mostRecentlyWonElectionYear  
+from win_family w natural join most_recent_date m natural join country c;
 
