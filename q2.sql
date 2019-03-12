@@ -7,7 +7,7 @@ create table q3(
        partyFamily VARCHaR(50),
        wonElections INT,
        mostRecentlyWonElectionId INT,
-       mostRecentlyWonElectionYear INT
+       mostRecentlyWonElectionYear DATE
 ); 
 
 -- Find parties that have won more than 3 times the average number of winning elections of parties of the same country. 
