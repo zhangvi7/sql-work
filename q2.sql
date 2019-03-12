@@ -70,15 +70,22 @@ where w.election_id = e.id
 group by w.party_id, e.id; 
 
 --find party family and name
-DROP VIEW IF EXISTS party_name_family CASCADE;
-create view party_name_family as
+DROP VIEW IF EXISTS win_name CASCADE;
+create view win_name as
 select w.country_id, w.party_wins, w.party_id, p.name
 from won_more_3x w, party p
 where w.party_id = p.id;
 
-select w.country_id, w.party_wins, w.party_id, p.name
-from won_more_3x w, party p
-where w.party_id = p.id;
+DROP VIEW IF EXISTS win_family CASCADE;
+create view win_family as
+select w.country_id, w.party_wins, w.party_id, w.name, p.family
+from win_name w, party_family p
+where w.party_id = p.party_id;
+
+select w.country_id, w.party_wins, w.party_id, w.name, p.family
+from win_name w, party_family p
+where w.party_id = p.party_id;
+
 
 
 
