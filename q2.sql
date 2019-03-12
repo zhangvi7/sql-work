@@ -29,7 +29,7 @@ where e.election_id = w.election_id and e.votes = w.max_votes and
       e.party_id = p.id;
 --2) Using all winning parties in election, find number of wins per party
 DROP VIEW IF EXISTS wins_per_party_no_country CASCADE;
-create view wins_per_party as
+create view wins_per_party_no_country as
 select w.party_id, count(p.country_id) as party_wins
 from winning_party w right join party p on w.party_id = p.id
 group by w.party_id; 
