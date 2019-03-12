@@ -35,7 +35,7 @@ from winning_party w
 group by w.party_id;
 
 create view wins_per_party as
-select w.party_id, w.party_wins, p.country_id as country_id
+select w.party_id, w.party_wins, p.country_id as w.country_id
 from wins_per_party2 w, party p
 where w.party_id = p.id;
 -- create view wins_per_party as
