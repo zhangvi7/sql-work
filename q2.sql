@@ -54,9 +54,25 @@ select w.country_id, w.party_wins, w.party_id
 from wins_per_party w, avg_wins_country a
 where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
 
-select w.country_id, w.party_wins, w.party_id
-from wins_per_party w, avg_wins_country a
-where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
+create view with_country_name as
+select c.name as countryName, w.party_wins , w.party_id
+from won_more_3x w, country c
+where w.country_id = c.id;
+
+select c.name as countryName, w.party_wins , w.party_id
+from won_more_3x w, country c
+where w.country_id = c.id;
+
+create view with_party_name as
+select w.countryName, p.name as partyName, w.party_wins as wonElections, w.party_id
+from with_country_name w, party p
+where w.party_id = p.id;
+
+select w.countryName, p.name as partyName, w.party_wins as wonElections, w.party_id
+from with_country_name w, party p
+where w.party_id = p.id;
+
+
 -- select w.country_id, w.party_wins, w.party_id
 -- from wins_per_party w, avg_wins_country a
 -- where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
