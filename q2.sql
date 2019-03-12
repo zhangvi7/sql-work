@@ -79,12 +79,11 @@ where w.party_id = p.id;
 DROP VIEW IF EXISTS win_family CASCADE;
 create view win_family as
 select w.country_id, w.party_wins, w.party_id, w.name, p.family
-from win_name w right join party_family p
-where w.party_id = p.party_id;
+from win_name w right join party_family p on w.party_id = p.party_id;
 
 select w.country_id, w.party_wins, w.party_id, w.name, p.family
-from win_name w right join party_family p
-where w.party_id = p.party_id;
+from win_name w right join party_family p on w.party_id = p.party_id;
+
 
 
 
