@@ -73,7 +73,7 @@ select c.name as countryName,
     m.mostRecentlyWonElectionDate as mostRecentlyWonElectionDate,
     m.mostRecentlyWonElectionId as mostRecentlyWonElectionId
 from ans a, country c, most_recent_id m
-where a.country_id = c.id, a.id = m.party_id;
+where a.country_id = c.id and a.id = m.party_id;
 
 
 
