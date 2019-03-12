@@ -81,27 +81,13 @@ create view win_family as
 select w.country_id, w.party_wins, w.party_id, w.name, p.family
 from win_name w left join party_family p on w.party_id = p.party_id;
 
-select w.country_id, w.party_wins, w.party_id, w.name, p.family
-from win_name w left join party_family p on w.party_id = p.party_id;
 
+insert into q3
+select w.name as countryName, 
+    w.name as partyName, 
+    w.family as partyFamily,
+    w.party_wins as wonElections,
+    m.mostRecentlyWonElectionDate as mostRecentlyWonElectionDate,
+    m.mostRecentlyWonElectionId as mostRecentlyWonElectionId
+from win_family w natural join most_recent_date m
 
-
-
-
--- create view most_recent_id as
--- select m.party_id, m.mostRecentlyWonElectionDate, e.id as mostRecentlyWonElectionId
--- from most_recent_date m, election e
--- where m.id = e.id; 
-
---6) insert into table
--- insert into q3
--- select c.name as countryName, 
---     a.name as partyName, 
---     a.family as partyFamily,
---     a.party_wins as wonElections,
---     m.mostRecentlyWonElectionDate as mostRecentlyWonElectionDate,
---     m.mostRecentlyWonElectionId as mostRecentlyWonElectionId
--- from won_more_3x a, country c, most_recent_id m
--- where a.country_id = c.id and a.id = m.party_id;
-
---find party family name down here too using party_id
