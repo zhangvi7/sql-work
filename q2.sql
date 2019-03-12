@@ -73,10 +73,10 @@ group by w.party_id, e.id;
 DROP VIEW IF EXISTS party_name_family CASCADE;
 create view party_name_family as
 select w.country_id, w.party_wins, w.party_id, p.name, pf.family
-from won_more_3x w natural join party p natural join party_family pf
+from won_more_3x w natural join party p natural join party_family pf;
 
 select w.country_id, w.party_wins, w.party_id, p.name, pf.family
-from won_more_3x w natural join party p natural join party_family pf
+from won_more_3x w natural join party p natural join party_family pf;
 
 
 
@@ -87,13 +87,13 @@ from won_more_3x w natural join party p natural join party_family pf
 
 --6) insert into table
 -- insert into q3
-select c.name as countryName, 
-    a.name as partyName, 
-    a.family as partyFamily,
-    a.party_wins as wonElections,
-    m.mostRecentlyWonElectionDate as mostRecentlyWonElectionDate,
-    m.mostRecentlyWonElectionId as mostRecentlyWonElectionId
-from won_more_3x a, country c, most_recent_id m
-where a.country_id = c.id and a.id = m.party_id;
+-- select c.name as countryName, 
+--     a.name as partyName, 
+--     a.family as partyFamily,
+--     a.party_wins as wonElections,
+--     m.mostRecentlyWonElectionDate as mostRecentlyWonElectionDate,
+--     m.mostRecentlyWonElectionId as mostRecentlyWonElectionId
+-- from won_more_3x a, country c, most_recent_id m
+-- where a.country_id = c.id and a.id = m.party_id;
 
 --find party family name down here too using party_id
