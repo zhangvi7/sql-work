@@ -65,7 +65,7 @@ from with_country_name w, party p
 where w.party_id = p.id;
 
 create view with_party_family as
-select w.countryName, p.name as partyName, p.family as familyName, w.party_wins as wonElections, w.party_id
+select w.countryName, w.partyName, p.family as familyName, w.wonElections, w.party_id
 from with_party_name w right join party_family p on 
 w.party_id = p.party_id;
 
