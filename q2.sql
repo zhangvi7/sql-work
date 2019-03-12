@@ -36,16 +36,15 @@ from winning_party w right join party p on w.party_id = p.id
 group by w.party_id; 
 
 select w.party_id, count(p.country_id) as party_wins
-from winning_party w right join party p
-where w.party_id = p.id
+from winning_party w right join party p on w.party_id = p.id
 group by w.party_id; 
 
 CREATE VIEW num_win AS
 SELECT w.party_id, p.country_id, w.party_wins
-FROM wins_per_party w LEFT JOIN party p ON party.id= w.party_id;
+FROM wins_per_party w LEFT JOIN party p ON p.id= w.party_id;
 
 SELECT w.party_id, p.country_id, w.party_wins
-FROM wins_per_party w LEFT JOIN party p ON party.id= w.party_id;
+FROM wins_per_party w LEFT JOIN party p ON p.id= w.party_id;
 
 -- 3)average number of winning elections of parties of the same country
 
