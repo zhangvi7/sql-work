@@ -90,10 +90,10 @@ from with_party_family w, election_result e
 where w.party_id = e.party_id;
 
 create view both as 
-select f.party_id, f.election_id as m.mostRecentlyWonElectionId, m.mostRecentlyWonElectionDate
+select f.party_id, f.election_id as mostRecentlyWonElectionId, m.mostRecentlyWonElectionDate
 from find_election f, most_recent_date m;
 
-select f.party_id, f.election_id as m.mostRecentlyWonElectionId, m.mostRecentlyWonElectionDate
+select f.party_id, f.election_id as mostRecentlyWonElectionId, m.mostRecentlyWonElectionDate
 from find_election f, most_recent_date m;
 -- DROP VIEW IF EXISTS ans CASCADE;
 -- create view ans as
