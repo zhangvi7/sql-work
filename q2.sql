@@ -37,7 +37,7 @@ DROP VIEW IF EXISTS wins_per_party CASCADE;
 create view wins_per_party as
 select w.id, count(*) as party_wins, w.country_id, w.name, w.election_id
 from winning_party w
-group by w.id;
+group by w.id, w.country_id;
 --3) Find average number of winning elections of parties per country
 DROP VIEW IF EXISTS avg_wins_country CASCADE;
 create view avg_wins_country as
@@ -72,7 +72,7 @@ select c.name as countryName,
     m.mostRecentlyWonElectionDate as mostRecentlyWonElectionDate
     m.mostRecentlyWonElectionId as mostRecentlyWonElectionId
 from ans a, country c, most_recent_id m
-where a.country_id = c.id, a.id = m.party_id
+where a.country_id = c.id, a.id = m.party_id;
 
 
 
