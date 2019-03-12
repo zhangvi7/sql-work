@@ -80,12 +80,12 @@ create view most_recent_date as
 select f.party_id, MAX(e.e_date) AS mostRecentlyWonElectionDate
 from find_election f, election e 
 where f.election_id = e.id
-group by f.party_id
+group by f.party_id;
 
 create view both as 
 select f.party_id, f.election_id, m.mostRecentlyWonElectionDate
-from find_election f, most_recent_date m
-where f.party_id = m.party_id;
+from find_election f, most_recent_date m;
+
 -- DROP VIEW IF EXISTS ans CASCADE;
 -- create view ans as
 --insert into q3
