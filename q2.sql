@@ -29,7 +29,7 @@ where e.election_id = w.election_id and e.votes = w.max_votes and
       e.party_id = p.id;
 --2) Using all winning parties in election, find number of wins per party
 -- DROP VIEW IF EXISTS wins_per_party CASCADE;
-create view wins_per_party as
+-- create view wins_per_party as
 select w.party_id as party_id, count(*) as party_wins
 from winning_party w
 group by w.party_id;
@@ -38,6 +38,7 @@ group by w.party_id;
 -- select w.party_id, w.party_wins, p.country_id
 -- from winning_party w, party p
 -- where w.party_id = p.id;
+
 -- CREATE VIEW wins_per_party AS
 -- SELECT num.party_id, party.country_id, num.num_of_winning as party_wins
 -- FROM 
@@ -49,18 +50,18 @@ group by w.party_id;
 --3) Find average number of winning elections of parties per country
 -- DROP VIEW IF EXISTS avg_wins_country CASCADE;
 -- create view avg_wins_country as
-select p.country_id, (sum(w.party_wins) / count(p.id)) as country_avg_win
-from wins_per_party w, party p
-where w.party_id = p.id
-group by p.country_id;
+-- select p.country_id, (sum(w.party_wins) / count(p.id)) as country_avg_win
+-- from wins_per_party w, party p
+-- where w.party_id = p.id
+-- group by p.country_id;
 
 -- --4) Find parties that won more than 3 x average win per country 
--- -- DROP VIEW IF EXISTS ans CASCADE;
--- create view ans as
--- select w.country_id, w.name, p.family, w.party_wins, w.id
--- from wins_per_party w, avg_wins_country a, party_family p
+-- -- DROP VIEW IF EXISTS won_more_3x CASCADE;
+-- create view won_more_3x as
+-- select w.country_id, w.name, w.party_wins, w.id
+-- from wins_per_party w, avg_wins_country a
 -- where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win) 
---       and w.id = p.party_id;
+     
 -- --6) Find most recently won election id/year for each party
 -- create view most_recent_date as
 -- select p.id as party_id, max(e.e_date) as mostRecentlyWonElectionDate, e.id
@@ -81,6 +82,7 @@ group by p.country_id;
 --     a.party_wins as wonElections,
 --     m.mostRecentlyWonElectionDate as mostRecentlyWonElectionDate,
 --     m.mostRecentlyWonElectionId as mostRecentlyWonElectionId
--- from ans a, country c, most_recent_id m
+-- from won_more_3x a, country c, most_recent_id m
 -- where a.country_id = c.id and a.id = m.party_id;
 
+--find party family name down here too using party_id
