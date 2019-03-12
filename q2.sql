@@ -72,20 +72,26 @@ w.party_id = p.party_id;
 DROP VIEW IF EXISTS find_election CASCADE;
 create view find_election as
 select w.party_id, e.election_id
-from with_party_family w, election_result e 
+from with_party_family w left join election_result e 
+on w.party_id = e.party_id;
+
+select w.party_id, e.election_id
+from with_party_family w left join election_result e 
 where w.party_id = e.party_id;
 
 DROP VIEW IF EXISTS most_recent_date CASCADE;
 create view most_recent_date as
 select f.party_id, MAX(e.e_date) AS max_date
-from find_election f, election e 
+from find_election f left join election e 
+where f.election_id = e.id
+group by f.party_id;
+
+select f.party_id, MAX(e.e_date) AS max_date
+from find_election f left join election e 
 where f.election_id = e.id
 group by f.party_id;
 
 create view both as 
-select f.party_id, f.election_id, m.max_date
-from find_election f, most_recent_date m;
-
 select f.party_id, f.election_id, m.max_date
 from find_election f, most_recent_date m;
 
