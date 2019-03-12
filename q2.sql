@@ -43,7 +43,7 @@ FROM wins_per_party_no_country w LEFT JOIN party p ON p.id= w.party_id;
 
 DROP VIEW IF EXISTS avg_wins_country CASCADE;
 create view avg_wins_country as
-select w.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
+select p.country_id, (sum(w.party_wins) / count(w.party_id)) as country_avg_win
 from wins_per_party w right join party p on w.party_id = p.id
 group by p.country_id;
 
