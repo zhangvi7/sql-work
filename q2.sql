@@ -72,13 +72,13 @@ group by w.party_id, e.id;
 --find party family and name
 DROP VIEW IF EXISTS party_name_family CASCADE;
 create view party_name_family as
-select w.country_id, w.party_wins, w.party_id, p.name, pf.family
-from won_more_3x w, party p, party_family pf
-where w.party_id = p.id and p.id = pf.party_id;
+select w.country_id, w.party_wins, w.party_id, p.name
+from won_more_3x w, party p
+where w.party_id = p.id;
 
-select w.country_id, w.party_wins, w.party_id, p.name, pf.family
-from won_more_3x w, party p, party_family pf
-where w.party_id = p.id and p.id = pf.party_id;
+select w.country_id, w.party_wins, w.party_id, p.name
+from won_more_3x w, party p
+where w.party_id = p.id;
 
 
 
