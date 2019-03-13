@@ -35,8 +35,7 @@ WHERE EXISTS (
         FROM ratios r2
         WHERE 
                 r.year > r2.year AND
-                r.ratio < r2.ratio)
-);
+                r.ratio < r2.ratio);
 
 select country_id
 FROM ratios r
@@ -45,8 +44,7 @@ WHERE EXISTS (
         FROM ratios r2
         WHERE 
                 r.year > r2.year AND
-                r.ratio < r2.ratio)
-);
+                r.ratio < r2.ratio);
 
 
 
