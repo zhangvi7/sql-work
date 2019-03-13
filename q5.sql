@@ -18,10 +18,6 @@ from election_full e
 where e.year >= 2001 and e.year <= 2016
 group by e.year, e.country_id;
 
-select e.country_id, e.year, avg(votes_cast::numeric / electorate::numeric) as ratio
-from election_full e
-where e.year >= 2001 and e.year <= 2016
-group by e.year, e.country_id;
 
 -- countries whose average election participation ratios during
 -- this period are monotonically non-decreasing (meaning that for Year Y and Year W, where at least
@@ -30,12 +26,23 @@ group by e.year, e.country_id;
 
 --1) tuples only for countries with at least 1 election, 2) must be non-decreasing ratio over years
 -- create view valid_countries as
-select country_id
-from ratios r
-WHERE EXISTS (
-    SELECT *
-    FROM ratios 
-    WHERE 
-        year < r.year AND ratio >= r.ratio );
+-- SELECT ID of countries not valid
+create view not_valid_countries
+(select country_id from ratios r) 
+except
+(select country_id from ratios where 
+    exists (
+        select * from ratios r
+        where ratios.year > r.year and
+              ratios.ratio < r.ratio)
+    );
 
+(select country_id from ratios r) 
+except
+(select country_id from ratios where 
+    exists (
+        select * from ratios r
+        where ratios.year > r.year and
+              ratios.ratio < r.ratio)
+    );
      
