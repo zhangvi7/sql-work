@@ -6,10 +6,17 @@ create table q5 (
         year int,
         participationRatio real
 );
-DROP VIEW IF EXISTS  election_full CASCADE;
-create view election_full as 
-select e.id, e.country_id, extract(YEAR from e_date) as year, e.electorate, e.votes_cast
-from election e;
+-- If votes_cast empty, speculate from sum of election results
+CREATE VIEW election_full AS 
+SELECT election.id, election.country_id, election.e_date, electorate,
+        (CASE WHEN votes_cast IS NOT NULL THEN votes_cast
+            ELSE (
+                    SELECT SUM(votes) 
+                    FROM election_result
+                    WHERE election_result.election_id = election.id)
+                END) 
+                    AS votes_cast
+FROM election;
 
 
 -- Group by each country and year
