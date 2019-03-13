@@ -7,7 +7,7 @@ create table q5 (
         participationRatio real
 );
 
-create view as election_full as 
+create view election_full as 
 select e.id, e.country_id, extract(YEAR from e.e_date) as e.year, e.electorate, e.votes_cast
 from election e
 group by e.country_id, e.e_date;
