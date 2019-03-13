@@ -39,7 +39,7 @@ WHERE EXISTS (
                
 
 create view valid_countries as
-select c.country_id
+select c.id
 from country c
 where not exists (
     SELECT n.country_id
