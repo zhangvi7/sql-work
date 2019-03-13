@@ -32,7 +32,7 @@ group by e.year, e.country_id;
 -- create view valid_countries as
 select country_id
 from ratios r
-WHERE NOT EXISTS (
+WHERE EXISTS (
     SELECT *
     FROM ratios 
     WHERE 
