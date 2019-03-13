@@ -78,25 +78,21 @@ select w.countryName, w.partyName, p.family as familyName, w.wonElections, w.par
 from with_party_name w left join party_family p on 
 w.party_id = p.party_id;
 
--- CREATE VIEW most_recent_won AS
--- SELECT recent.party_id,winner.election_id AS mostRecentlyWonElectionId, recent. mostRecentlyWonElectionDate
--- FROM (find_election JOIN winner ON find_election.party_id = winner.party_id) 
---      JOIN election ON election.id = winner.election_id AND cast(recent.mostRecentlyWonElectionDate AS DATE) = election.e_date;
-
 --find all winner parties election id
-DROP VIEW IF EXISTS find_election CASCADE;
+DROP VIEW IF EXISTS find_election_date CASCADE;
 create view find_election as
 select w.party_id, MAX(e.e_date) AS max_date
 from winning_party w left join election e 
 on w.election_id = e.id
 group by w.party_id;
 
-select w.party_id, MAX(e.e_date) AS max_date
-from winning_party w left join election e 
-on w.election_id = e.id
-group by w.party_id;
+CREATE VIEW find_election_id AS
+SELECT f.party_id, w.election_id, f.max_date
+FROM (find_election_date f join winning_party w ON f.party_id = w.party_id);    
+-- JOIN election ON election.id = winner.election_id AND cast                 (recent.mostRecentlyWonElectionDate AS DATE) = election.e_date;
 
-
+SELECT f.party_id, w.election_id, f.max_date
+FROM (find_election_date f join winning_party w ON f.party_id = w.party_id); 
 
 
 -- -- DROP VIEW IF EXISTS ans CASCADE;
