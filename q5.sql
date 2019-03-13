@@ -1,5 +1,5 @@
 SET SEARCH_PATH TO parlgov;
-drop table if exists q3 cascade;
+drop table if exists q5 cascade;
 
 create table q5 (
         countryName varchar(50),
@@ -18,7 +18,7 @@ group by e.e_date;
 
 select e.country_id, e.e_date, 
 from election e
-group by e.country_id,e.e_date;
+group by e.country_id, e.e_date;
 
 -- -- CREATE VIEW election_full AS 
 -- SELECT election.id, election.country_id, election.e_date, electorate,
