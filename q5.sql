@@ -36,18 +36,10 @@ WHERE EXISTS (
         WHERE 
                 r.year > r2.year AND
                 r.ratio < r2.ratio);
-
-select distinct country_id
-FROM ratios r
-WHERE EXISTS (
-        SELECT * 
-        FROM ratios r2
-        WHERE 
-                r.year > r2.year AND
-                r.ratio < r2.ratio);                
+               
 
 create view valid_countries as
-select r.country_id, r.year, r.ratio
+select r.country_id
 from ratios r
 where not exists (
     SELECT n.country_id
@@ -55,7 +47,7 @@ where not exists (
     WHERE r.country_id = n.country_id
 );
 
-select r.country_id, r.year, r.ratio
+select r.country_id
 from ratios r
 where not exists (
     SELECT n.country_id
