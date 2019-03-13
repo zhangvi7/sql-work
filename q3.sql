@@ -2,9 +2,9 @@ SET SEARCH_PATH TO parlgov;
 drop table if exists q3 cascade;
 
 create table q3(
-       countryName VARCHaR(50),
+       countryName VARCHaR(100),
        partyName VARCHaR(100),
-       partyFamily VARCHaR(50),
+       partyFamily VARCHaR(100),
        wonElections INT,
        mostRecentlyWonElectionId INT,
        mostRecentlyWonElectionYear INT
@@ -53,7 +53,7 @@ DROP VIEW IF EXISTS avg_wins_country CASCADE;
 create view avg_wins_country as
 SELECT party.country_id, (sum(wins_per_party.party_wins)/count(party.id) ) AS country_avg_win
 FROM wins_per_party right join party ON wins_per_party.party_id = party.id 
-GROUP BY party.country_id ;
+GROUP BY party.country_id =;
 
 
 --4) Find parties that won more than 3 x average win per country 
@@ -78,11 +78,6 @@ select w.countryName, w.partyName, p.family as familyName, w.wonElections, w.par
 from with_party_name w left join party_family p on 
 w.party_id = p.party_id;
 
-select w.countryName, w.partyName, p.family as familyName, w.wonElections, w.party_id
-from with_party_name w left join party_family p on 
-w.party_id = p.party_id;
-
-
 --find all winner parties election id
 DROP VIEW IF EXISTS find_election_date CASCADE;
 create view find_election_date as
@@ -95,7 +90,7 @@ CREATE VIEW find_election_id AS
 SELECT f.party_id, w.election_id, f.max_date
 FROM (find_election_date f 
         Join winning_party w ON f.party_id = w.party_id)  
-        JOIN election ON election.id = w.election_id AND cast (f.max_date AS DATE) = election.e_date;
+        JOIN election ON election.id = w.election_id;
 
 
 -- SELECT f.party_id, w.election_id, f.max_date
@@ -108,12 +103,12 @@ FROM (find_election_date f
 -- DROP VIEW IF EXISTS ans CASCADE;
 -- create view ans as
 insert into q3
-select w.countryName, w.partyName,w.familyName, w.wonElections, f.election_id as mostRecentlyWonElectionId, 
+select w.countryName, w.partyName, w.familyName, w.wonElections, f.election_id as mostRecentlyWonElectionId, 
 EXTRACT(year FROM f.max_date) AS mostRecentlyWonElectionYear 
 from find_election_id f join with_party_family w on
 f.party_id = w.party_id;
 
-select w.countryName, w.partyName,w.familyName, w.wonElections, f.election_id as mostRecentlyWonElectionId, 
+select w.countryName, w.partyName, w.familyName, w.wonElections, f.election_id as mostRecentlyWonElectionId, 
 EXTRACT(year FROM f.max_date) AS mostRecentlyWonElectionYear 
 from find_election_id f join with_party_family w on
 f.party_id = w.party_id;
