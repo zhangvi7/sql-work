@@ -39,21 +39,15 @@ WHERE EXISTS (
                
 
 create view valid_countries as
-select r.country_id
-from ratios r
+select c.country_id
+from countries c
 where not exists (
     SELECT n.country_id
     FROM not_valid_countries n
-    WHERE r.country_id = n.country_id
+    WHERE n.country_id = c.id
 );
 
-select r.country_id
-from ratios r
-where not exists (
-    SELECT n.country_id
-    FROM not_valid_countries n
-    WHERE r.country_id = n.country_id
-);
+
 
 
 
