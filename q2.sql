@@ -88,10 +88,9 @@ on w.election_id = e.id
 group by w.party_id;
 
 CREATE VIEW find_election_id AS
-SELECT f.party_id, w.election_id, f.max_date
-FROM (find_election_date f 
-        Join winning_party w ON f.party_id = w.party_id)  
-        JOIN election ON election.id = w.election_id;
+SELECT f.party_id, w.election_id, cast (f.max_date AS DATE)
+FROM (find_election_date f join winning_party w ON f.party_id = w.party_id)
+    JOIN election ON election.id = w.election_id AND f.max_date = election.e_date;
 
 
 -- SELECT f.party_id, w.election_id, f.max_date
@@ -110,7 +109,7 @@ from find_election_id f join with_party_family w on
 f.party_id = w.party_id;
 
 select w.countryName, w.partyName,w.familyName, w.wonElections, f.election_id as mostRecentlyWonElectionId, 
-EXTRACT(year FROM f.max_date) AS mostRecentlyWonElectionYear 
+EXTRACT (YEAR FROM f.max_date) AS mostRecentlyWonElectionYear 
 from find_election_id f join with_party_family w on
 f.party_id = w.party_id;
 
