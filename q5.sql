@@ -42,18 +42,12 @@ create view valid_countries as
 select c.id
 from country c
 where not exists (
-    SELECT n.country_id
+    SELECT *
     FROM not_valid_countries n
     WHERE n.country_id = c.id
 );
 
-select c.id
-from country c
-where not exists (
-    SELECT n.country_id
-    FROM not_valid_countries n
-    WHERE n.country_id = c.id
-);
+
 
 
 
