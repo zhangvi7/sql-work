@@ -53,7 +53,7 @@ DROP VIEW IF EXISTS avg_wins_country CASCADE;
 create view avg_wins_country as
 SELECT party.country_id, (sum(wins_per_party.party_wins)/count(party.id) ) AS country_avg_win
 FROM wins_per_party right join party ON wins_per_party.party_id = party.id 
-GROUP BY party.country_id =;
+GROUP BY party.country_id;
 
 
 --4) Find parties that won more than 3 x average win per country 
