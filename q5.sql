@@ -27,8 +27,8 @@ group by e.year, e.country_id;
 --1) tuples only for countries with at least 1 election, 2) must be non-decreasing ratio over years
 -- create view valid_countries as
 -- SELECT ID of countries not valid
-create view not_valid_countries
-select distinct r.country_id
+create view not_valid_countries as
+select distinct country_id
 FROM ratios r
 WHERE EXISTS (
         SELECT * 
@@ -37,7 +37,7 @@ WHERE EXISTS (
                 r.year > r2.year AND
                 r.ratio < r2.ratio);
 
-create view valid_countries
+create view valid_countries as
 select r.country_id, r.year, r.ratio
 from ratios r
 where not exists (
@@ -46,13 +46,6 @@ where not exists (
     WHERE r.country_id = n.country_id
 );
 
-select r.country_id, r.year, r.ratio
-from ratios r
-where not exists (
-    SELECT n.country_id
-    FROM not_valid_countries n
-    WHERE r.country_id = n.country_id
-);
 
 
 
