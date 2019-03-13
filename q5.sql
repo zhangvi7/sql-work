@@ -14,7 +14,7 @@ from election e;
 create view ratios as
 select e.country_id, e.year, avg(e.votes_cast / e.electorate) as ratio
 from election_full e
-where e.e_date >= 2001 and e.e_date <= 2016
+where e.year >= 2001 and e.year <= 2016
 group by e.country_id, e.year;
 
 select e.country_id, e.year, avg(e.votes_cast / e.electorate) as ratio
