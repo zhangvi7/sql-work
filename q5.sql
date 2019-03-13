@@ -16,7 +16,7 @@ select e.e_date
 from election e
 group by e.e_date;
 
-select e.country_id, e.e_date, 
+select e.country_id, e.e_date 
 from election e
 group by e.country_id, e.e_date;
 
