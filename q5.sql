@@ -18,7 +18,7 @@ from election_full e
 where e.year >= 2001 and e.year <= 2016
 group by e.year, e.country_id;
 
-select e.country_id, e.year, avg(votes_cast::numeric / electorate::numeric) as ratio
+select e.country_id, e.year, avg(votes_cast / electorate) as ratio
 from election_full e
 where e.year >= 2001 and e.year <= 2016
 group by e.year, e.country_id;
@@ -32,7 +32,7 @@ group by e.year, e.country_id;
 -- create view valid_countries as
 select country_id
 from ratios r
-WHERE NOT EXISTS (
+WHERE NOT EXISTS in (
     SELECT *
     FROM ratios 
     WHERE 
