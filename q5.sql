@@ -28,28 +28,26 @@ group by e.year, e.country_id;
 -- create view valid_countries as
 -- SELECT ID of countries not valid
 create view not_valid_countries
-(select country_id from ratios) 
-except
-(SELECT country_id
-FROM ratios
+select country_id
+FROM ratios r
 WHERE EXISTS (
         SELECT * 
-        FROM ratios p
+        FROM ratios r2
         WHERE 
-                ratios.year > p.year AND
-                ratios.ratio < p.ratio)
-    );
+                r.year > r2.year AND
+                r.ratio < r2.ratio)
+);
 
-(select country_id from ratios) 
-except
-(SELECT country_id
-FROM ratios
+select country_id
+FROM ratios r
 WHERE EXISTS (
         SELECT * 
-        FROM ratios p
+        FROM ratios r2
         WHERE 
-                ratios.year > p.year AND
-                ratios.ratio < p.ratio)
-    );
+                r.year > r2.year AND
+                r.ratio < r2.ratio)
+);
+
+
 
      
