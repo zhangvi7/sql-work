@@ -9,13 +9,13 @@ create table q5 (
 
 create view election_full as 
 select e.id, e.country_id, extract(YEAR from e_date) as year, e.electorate, e.votes_cast
-from election e
+from election e;
 
 create view ratios as
 select e.country_id, e.year, avg(e.votes_cast / e.electorate) as ratio
 from election_full e
 where e.e_date >= 2001 and e.e_date <= 2016
-group by  e.country_id, e.year;
+group by e.country_id, e.year;
 
 select e.country_id, e.year, avg(e.votes_cast / e.electorate) as ratio
 from election_full e
