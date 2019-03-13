@@ -91,7 +91,7 @@ CREATE VIEW find_election_id AS
 SELECT f.party_id, w.election_id, f.max_date
 FROM (find_election_date f 
         Join winning_party w ON f.party_id = w.party_id)  
-        JOIN election ON election.id = w.election_id AND cast (f.max_date AS DATE) = election.e_date;
+        JOIN election ON election.id = w.election_id;
 
 
 -- SELECT f.party_id, w.election_id, f.max_date
