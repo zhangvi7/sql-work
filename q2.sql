@@ -88,8 +88,8 @@ group by w.party_id;
 
 CREATE VIEW find_election_id AS
 SELECT f.party_id, w.election_id, f.max_date
-FROM (find_election_date f join winning_party w ON f.party_id = w.party_id);    
--- JOIN election ON election.id = winner.election_id AND cast                 (recent.mostRecentlyWonElectionDate AS DATE) = election.e_date;
+FROM (find_election_date f join winning_party w ON f.party_id = w.party_id)   
+JOIN election ON election.id = w.election_id AND cast (f.max_date AS DATE) = election.e_date;
 
 -- DROP VIEW IF EXISTS ans CASCADE;
 -- create view ans as
