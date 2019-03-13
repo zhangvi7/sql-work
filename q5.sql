@@ -7,40 +7,35 @@ create table q5 (
         participationRatio real
 );
 
--- create view as election_full as 
-select e.country_id
-from election e
-group by e.country_id;
-
-select e.e_date
-from election e
-group by e.e_date;
-
-select e.country_id, e.e_date 
+create view as election_full as 
+select e.id, e.country_id, extract(YEAR from e.e_date) as e.year, e.electorate, e.votes_cast
 from election e
 group by e.country_id, e.e_date;
 
--- -- CREATE VIEW election_full AS 
--- SELECT election.id, election.country_id, election.e_date, electorate,
---         (CASE WHEN votes_cast IS NOT NULL THEN votes_cast
---             ELSE (
---                     SELECT SUM(votes) 
---                     FROM election_result
---                     WHERE election_result.election_id = election.id)
---                 END) 
---                     AS votes_cast
--- FROM election;
+create view ratio as
+select e.country_id, e.year, avg(e.votes_cast / e.electorate) as ratio
+from election_full e
+where e.e_date >= 2001 and e.e_date <= 2016
+group by  e.country_id, e.year;
 
--- -- Group by each country and year
--- create view ratio as
--- select
--- from election_full e
--- where e.e_date > '2001-01-01' and e.e_date < '2016-12-3'
--- group by
+select e.country_id, e.year, avg(e.votes_cast / e.electorate) as ratio
+from election_full e
+where e.e_date >= 2001 and e.e_date <= 2016
+group by  e.country_id, e.year;
 
 
--- CREATE VIEW participation_ratio AS 
--- SELECT EXTRACT(year FROM e_date) AS year, country_id, AVG(votes_cast::numeric / electorate::numeric) AS ratio
--- FROM election_full
--- WHERE e_date > '2001-01-01' AND e_date < '2016-12-31'
--- GROUP BY year, country_id;
+-- countries whose average election participation ratios during
+-- this period are monotonically non-decreasing (meaning that for Year Y and Year W, where at least
+-- one election has happened in each of them, if Y < W, then the average participation in Year Y is
+-- ≤ average participation in Year W)
+
+--1) tuples only for countries with at least 1 election, 2) must be non-decreasing ratio over years
+-- create view valid_countries as
+select country_id
+from ratio 
+where not exist (
+    select * 
+    from ratio r
+    where r.year > year and r.ratio <= ratio);
+
+     
