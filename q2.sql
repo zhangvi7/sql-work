@@ -97,11 +97,6 @@ FROM (find_election_date f
         Join winning_party w ON f.party_id = w.party_id)  
         JOIN election ON election.id = w.election_id AND cast (f.max_date AS DATE) = election.e_date;
 
-        SELECT f.party_id, w.election_id, f.max_date
-FROM (find_election_date f 
-        Join winning_party w ON f.party_id = w.party_id)  
-        JOIN election ON election.id = w.election_id AND cast (f.max_date AS DATE) = election.e_date;
-
 
 -- SELECT f.party_id, w.election_id, f.max_date
 -- FROM ((select w.party_id, MAX(e.e_date) AS max_date
@@ -112,7 +107,7 @@ FROM (find_election_date f
 
 -- DROP VIEW IF EXISTS ans CASCADE;
 -- create view ans as
--- insert into q3
+insert into q3
 select w.countryName, w.partyName,w.familyName, w.wonElections, f.election_id as mostRecentlyWonElectionId, 
 EXTRACT(year FROM f.max_date) AS mostRecentlyWonElectionYear 
 from find_election_id f join with_party_family w on
