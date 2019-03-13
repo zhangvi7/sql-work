@@ -47,7 +47,7 @@ where not exists (
     WHERE n.country_id = c.id
 );
 
-
+select c.id
 from country c
 where not exists (
     SELECT *
