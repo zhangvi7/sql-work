@@ -12,15 +12,15 @@ select e.id, e.country_id, e.e_date, e.electorate, e.votes_cast
 from election e;
 
 -- CREATE VIEW election_full AS 
--- SELECT election.id, election.country_id, election.e_date, electorate,
---         (CASE WHEN votes_cast IS NOT NULL THEN votes_cast
---             ELSE (
---                     SELECT SUM(votes) 
---                     FROM election_result
---                     WHERE election_result.election_id = election.id)
---                 END) 
---                     AS votes_cast
--- FROM election;
+SELECT election.id, election.country_id, election.e_date, electorate,
+        (CASE WHEN votes_cast IS NOT NULL THEN votes_cast
+            ELSE (
+                    SELECT SUM(votes) 
+                    FROM election_result
+                    WHERE election_result.election_id = election.id)
+                END) 
+                    AS votes_cast
+FROM election;
 
 -- Group by each country and year
 -- CREATE VIEW participation_ratio AS 
