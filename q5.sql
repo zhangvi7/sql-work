@@ -46,6 +46,13 @@ where not exists (
     WHERE r.country_id = n.country_id
 );
 
+select r.country_id, r.year, r.ratio
+from ratios r
+where not exists (
+    SELECT n.country_id
+    FROM not_valid_countries n
+    WHERE r.country_id = n.country_id
+);
 
 
 
