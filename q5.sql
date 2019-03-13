@@ -18,6 +18,7 @@ DROP VIEW IF EXISTS intermediate_step CASCADE;
 -- Define views for your intermediate steps here.
 
 -- If votes_cast empty, speculate from sum of election results
+DROP VIEW IF EXISTS election_full CASCADE;
 CREATE VIEW election_full AS 
 SELECT election.id, election.country_id, election.e_date, electorate,
         (CASE WHEN votes_cast IS NOT NULL THEN votes_cast
