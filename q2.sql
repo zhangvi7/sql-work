@@ -84,27 +84,31 @@ w.party_id = p.party_id;
 
 
 --find all winner parties election id
--- DROP VIEW IF EXISTS find_election_date CASCADE;
--- create view find_election_date as
--- select w.party_id, MAX(e.e_date) AS max_date
--- from winning_party w left join election e 
--- on w.election_id = e.id
--- group by w.party_id;
+DROP VIEW IF EXISTS find_election_date CASCADE;
+create view find_election_date as
+select distinct w.party_id, MAX(e.e_date) AS max_date
+from winning_party w left join election e 
+on w.election_id = e.id
+group by w.party_id;
 
 CREATE VIEW find_election_id AS
 SELECT f.party_id, w.election_id, f.max_date
-FROM ((select w.party_id, MAX(e.e_date) AS max_date
-from winning_party w left join election e 
-on w.election_id = e.id
-group by w.party_id) f join winning_party w ON f.party_id = w.party_id)  
-JOIN election ON election.id = w.election_id AND cast (f.max_date AS DATE) = election.e_date;
+FROM (find_election_date f 
+        Join winning_party w ON f.party_id = w.party_id)  
+        JOIN election ON election.id = w.election_id AND cast (f.max_date AS DATE) = election.e_date;
 
-SELECT f.party_id, w.election_id, f.max_date
-FROM ((select w.party_id, MAX(e.e_date) AS max_date
-from winning_party w left join election e 
-on w.election_id = e.id
-group by w.party_id) f join winning_party w ON f.party_id = w.party_id)  
-JOIN election ON election.id = w.election_id AND cast (f.max_date AS DATE) = election.e_date;
+        SELECT f.party_id, w.election_id, f.max_date
+FROM (find_election_date f 
+        Join winning_party w ON f.party_id = w.party_id)  
+        JOIN election ON election.id = w.election_id AND cast (f.max_date AS DATE) = election.e_date;
+
+
+-- SELECT f.party_id, w.election_id, f.max_date
+-- FROM ((select w.party_id, MAX(e.e_date) AS max_date
+-- from winning_party w left join election e 
+-- on w.election_id = e.id
+-- group by w.party_id) f join winning_party w ON f.party_id = w.party_id)  
+-- JOIN election ON election.id = w.election_id AND cast (f.max_date AS DATE) = election.e_date;
 
 -- DROP VIEW IF EXISTS ans CASCADE;
 -- create view ans as
