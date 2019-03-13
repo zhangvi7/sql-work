@@ -30,7 +30,7 @@ group by e.year, e.country_id;
 
 --1) tuples only for countries with at least 1 election, 2) must be non-decreasing ratio over years
 -- create view valid_countries as
-select country_id
+select r.country_id
 from ratios r
 WHERE NOT EXISTS in (
     SELECT *
