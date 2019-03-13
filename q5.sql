@@ -28,7 +28,7 @@ group by e.year, e.country_id;
 -- create view valid_countries as
 -- SELECT ID of countries not valid
 create view not_valid_countries
-select country_id
+select distinct country_id
 FROM ratios r
 WHERE EXISTS (
         SELECT * 
@@ -37,14 +37,23 @@ WHERE EXISTS (
                 r.year > r2.year AND
                 r.ratio < r2.ratio);
 
-select country_id
-FROM ratios r
-WHERE EXISTS (
-        SELECT * 
-        FROM ratios r2
-        WHERE 
-                r.year > r2.year AND
-                r.ratio < r2.ratio);
+create view valid_countries
+select r.country_id, r.year, r.ratio
+from ratios r
+where not exists (
+    SELECT n.country_id
+    FROM not_valid_countries n
+    WHERE r.country_id = n.country_id
+);
+
+select r.country_id, r.year, r.ratio
+from ratios r
+where not exists (
+    SELECT n.country_id
+    FROM not_valid_countries n
+    WHERE r.country_id = n.country_id
+);
+
 
 
 
