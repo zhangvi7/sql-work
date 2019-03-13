@@ -48,7 +48,12 @@ where not exists (
 );
 
 
-
+from country c
+where not exists (
+    SELECT *
+    FROM not_valid_countries n
+    WHERE n.country_id = c.id
+);
 
 
 
