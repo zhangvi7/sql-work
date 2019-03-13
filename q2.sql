@@ -80,7 +80,7 @@ w.party_id = p.party_id;
 
 --find all winner parties election id
 DROP VIEW IF EXISTS find_election_date CASCADE;
-create view find_election as
+create view find_election_date as
 select w.party_id, MAX(e.e_date) AS max_date
 from winning_party w left join election e 
 on w.election_id = e.id
