@@ -12,7 +12,7 @@ CREATE TABLE q5
 
 -- Getting country name, election date, election participation ratio 
 CREATE VIEW countryElection AS
-SELECT country.name AS countryName, YEAR(e_date) AS "year", CAST(votes_cast/electorate AS FLOAT) AS electionPartRatio
+SELECT country.name AS countryName, extract (year from e_date) AS "year", CAST(votes_cast/electorate AS FLOAT) AS electionPartRatio
 FROM election, country
 WHERE election.country_id = country.id;
 
