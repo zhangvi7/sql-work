@@ -78,7 +78,12 @@ FROM (find_election_date f join winning_party w ON f.party_id = w.party_id)
 
 
 insert into q3
-select w.countryName, w.partyName,w.familyName, w.wonElections, f.election_id as mostRecentlyWonElectionId, 
+select w.countryName, w.partyName, w.familyName, w.wonElections, f.election_id as mostRecentlyWonElectionId, 
+EXTRACT(YEAR FROM f.max_date) AS mostRecentlyWonElectionYear 
+from find_election_id f join with_party_family w on
+f.party_id = w.party_id;
+
+select w.countryName, w.partyName, w.familyName, w.wonElections, f.election_id as mostRecentlyWonElectionId, 
 EXTRACT(YEAR FROM f.max_date) AS mostRecentlyWonElectionYear 
 from find_election_id f join with_party_family w on
 f.party_id = w.party_id;
