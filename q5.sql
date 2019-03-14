@@ -7,15 +7,15 @@ create table q5 (
         participationRatio real
 );
 
-DROP VIEW IF EXISTS elections CASCADE;
-create view elections as 
+DROP VIEW IF EXISTS election_full CASCADE;
+create view election_full as 
 select e.id, e.country_id, extract(YEAR from e_date) as year, e.electorate, e.votes_cast
 from election e;
 
 DROP VIEW IF EXISTS ratios CASCADE;
 create view ratios as
-select e.country_id, e.year, avg(votes_cast / electorate) as ratio
-from elections e
+select e.country_id, e.year, avg(votes_cast::numeric / electorate::numeric) as ratio
+from election_full e
 where e.year >= 2001 and e.year <= 2016
 group by e.year, e.country_id;
 
