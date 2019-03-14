@@ -56,6 +56,15 @@ WHERE EXISTS (
                 participation_ratio.year > p.year AND
                 participation_ratio.ratio < p.ratio);
 
+SELECT DISTINCT country_id
+FROM participation_ratio
+WHERE EXISTS (
+        SELECT * 
+        FROM participation_ratio p
+        WHERE 
+                participation_ratio.year > p.year AND
+                participation_ratio.ratio < p.ratio);
+
 -- SELECT ID of countries that are valid
 CREATE VIEW cid_valid AS
 SELECT id
@@ -66,9 +75,23 @@ WHERE NOT EXISTS (
         WHERE country.id = cid_not_valid.country_id
 );
 
+SELECT id
+FROM country
+WHERE NOT EXISTS (
+        SELECT * 
+        FROM cid_not_valid
+        WHERE country.id = cid_not_valid.country_id
+);
 
 -- the answer to the query 
 insert into q3 
+SELECT country.name AS countryName, 
+        participation_ratio.year AS year, 
+        participation_ratio.ratio AS participationRatio
+FROM participation_ratio, country, cid_valid
+WHERE participation_ratio.country_id = country.id AND 
+        participation_ratio.country_id = cid_valid.id; 
+
 SELECT country.name AS countryName, 
         participation_ratio.year AS year, 
         participation_ratio.ratio AS participationRatio
