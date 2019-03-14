@@ -18,6 +18,11 @@ from election_full e
 where e.year >= 2001 and e.year <= 2016
 group by e.year, e.country_id;
 
+select e.country_id, e.year, avg(votes_cast::numeric / electorate::numeric) as ratio
+from election_full e
+where e.year >= 2001 and e.year <= 2016
+group by e.year, e.country_id;
+
 
 -- countries whose average election participation ratios during
 -- this period are monotonically non-decreasing (meaning that for Year Y and Year W, where at least
