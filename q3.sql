@@ -39,14 +39,14 @@ FROM count_party LEFT JOIN party ON party.id = count_party.party_id;
 DROP VIEW IF EXISTS avg_wins_country CASCADE;
 create view avg_wins_country as
 SELECT party.country_id, (sum(wins_per_party.party_wins)/count(party.id) ) AS country_avg_win
-FROM wins_count_partyright join party ON wins_per_party.party_id = party.id 
+FROM wins_count_party right join party ON wins_per_party.party_id = party.id 
 GROUP BY party.country_id;
 
  
 DROP VIEW IF EXISTS won_more_three_times CASCADE;
 create view won_more_three_times as
 select w.country_id, w.party_id, w.party_wins
-from wins_count_partyw, avg_wins_country a
+from wins_count_party w, avg_wins_country a
 where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
 
 create view with_country_name as
