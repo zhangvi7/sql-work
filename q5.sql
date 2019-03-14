@@ -56,7 +56,7 @@ SELECT c.name AS countryName,
        v.year AS year, 
         v.ratio AS participationRatio
 FROM valid_countries v, country c
-WHERE v.country_id = country.id;
+WHERE v.country_id = c.id;
 
 
 
@@ -64,7 +64,7 @@ SELECT c.name AS countryName,
        v.year AS year, 
         v.ratio AS participationRatio
 FROM valid_countries v, country c
-WHERE v.country_id = country.id;
+WHERE v.country_id = c.id;
 
 
      
