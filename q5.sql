@@ -1,56 +1,77 @@
-SET search_path TO parlgov;
+SET SEARCH_PATH TO parlgov;
 drop table if exists q5 cascade;
 
-CREATE TABLE q5 
-(
-    countryName          VARCHAR (50),
-    "year"               INT,
-    participationRatio   FLOAT
+create table q5 (
+        countryName varchar(50),
+        year int,
+        participationRatio real
 );
+DROP VIEW IF EXISTS  election_full CASCADE;
+create view election_full as 
+select e.id, e.country_id, extract(YEAR from e_date) as year, e.electorate, e.votes_cast
+from election e;
+
+DROP VIEW IF EXISTS  ratios CASCADE;
+create view ratios as
+select e.country_id, e.year, avg(votes_cast::numeric / electorate::numeric) as ratio
+from election_full e
+where e.year >= 2001 and e.year <= 2016
+group by e.year, e.country_id;
 
 
+-- countries whose average election participation ratios during
+-- this period are monotonically non-decreasing (meaning that for Year Y and Year W, where at least
+-- one election has happened in each of them, if Y < W, then the average participation in Year Y is
+-- ≤ average participation in Year W)
 
--- Getting country name, election date, election participation ratio 
-CREATE VIEW countryElection AS
-SELECT country.name AS countryName, extract (year from e_date) AS "year", CAST(votes_cast/electorate AS FLOAT) AS electionPartRatio
-FROM election, country
-WHERE election.country_id = country.id;
-
-
--- Filtering countries only between 2001 and 2016
-CREATE VIEW countryRatio2001To2016 AS
-SELECT countryName, "year", ROUND(AVG(electionPartRatio), 2) as participationRatio
-FROM countryElection
-WHERE "year" > 2001 AND "year" <= 2016
-GROUP BY countryName, "year";
-
-
--- Finding all of the countries that do not have their ratios monotonically increasing between 2001 and 2016
--- Also do a chcek for if invalid countries is empty because there might be an error on their side that cannot fulfill a comparison with an empty table and result in nothing
-CREATE VIEW invalidCountries AS
-SELECT countryName
-FROM countryRatio2001To2016 cr1
-WHERE EXISTS
-    (
+--1) tuples only for countries with at least 1 election, 2) must be non-decreasing ratio over years
+-- create view valid_countries as
+-- SELECT ID of countries not valid
+create view not_valid_countries as
+select distinct country_id
+FROM ratios r
+WHERE EXISTS (
         SELECT * 
-        FROM countryRatio2001To2016 cr2
-        WHERE   cr1."year" > c2."year" AND 
-                cr1.participationRatio < cr2.participationRatio AND 
-                cr1.countryName = cr2.countryName
-    );
+        FROM ratios r2
+        WHERE 
+                r.year > r2.year AND
+                r.ratio < r2.ratio and
+                r.country_id = r2.country_id);
 
+select distinct country_id
+FROM ratios r
+WHERE EXISTS (
+        SELECT * 
+        FROM ratios r2
+        WHERE 
+                r.year > r2.year AND
+                r.ratio < r2.ratio and
+                r.country_id = r2.country_id);
+               
+create view valid_countries as
+select *
+from ratios r
+where not exists (
+    SELECT *
+    FROM not_valid_countries n
+    WHERE r.country_id = c.id
+);
 
--- Removing those invalid countries from the original list
-CREATE VIEW validCountries AS
-SELECT * 
-FROM countryRatio2001To2016 cr
-WHERE NOT EXISTS 
-(
-    SELECT * 
-    FROM invalidCountries ic
-    WHERE cr.countryName = ic.countryName
+select *
+from ratios r
+where not exists (
+    SELECT *
+    FROM not_valid_countries n
+    WHERE r.country_id = c.id
 );
 
 
-INSERT INTO q5 (countryName, "year", participationRatio)
-SELECT * FROM validCountries;
+
+
+
+
+
+
+
+
+     
