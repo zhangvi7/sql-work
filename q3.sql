@@ -24,29 +24,28 @@ where e.election_id = w.election_id and e.votes = w.max_votes and
       e.party_id = p.id;
 
 
-create view count_party as
-select distinct winning_party.party_id, count(party.country_id) AS per_party_wins 
-from winning_party RIGHT JOIN party ON winning_party.party_id = party.id 
-group by party_id;
-
-DROP VIEW IF EXISTS wins_count_party CASCADE;
-CREATE VIEW wins_count_party AS
-SELECT count_party.party_id, party.country_id, count_party.per_party_wins as party_wins
-FROM count_party LEFT JOIN party ON party.id = count_party.party_id;
+DROP VIEW IF EXISTS wins_per_party CASCADE;
+CREATE VIEW wins_per_party AS
+SELECT num.party_id, party.country_id, num.num_of_winning as party_wins
+FROM 
+    (SELECT winning_party.party_id, count(party.country_id) AS num_of_winning 
+    FROM winning_party RIGHT JOIN party ON winning_party.party_id = party.id 
+    GROUP BY party_id) num  
+    LEFT JOIN party ON party.id= num.party_id;
 
 
 
 DROP VIEW IF EXISTS avg_wins_country CASCADE;
 create view avg_wins_country as
 SELECT party.country_id, (sum(wins_per_party.party_wins)/count(party.id) ) AS country_avg_win
-FROM wins_count_party right join party ON wins_per_party.party_id = party.id 
+FROM wins_per_party right join party ON wins_per_party.party_id = party.id 
 GROUP BY party.country_id;
 
  
 DROP VIEW IF EXISTS won_more_three_times CASCADE;
 create view won_more_three_times as
 select w.country_id, w.party_id, w.party_wins
-from wins_count_party w, avg_wins_country a
+from wins_per_party w, avg_wins_country a
 where w.country_id = a.country_id and w.party_wins > (3 * a.country_avg_win);
 
 create view with_country_name as
@@ -63,6 +62,7 @@ create view with_party_family as
 select w.countryName, w.partyName, p.family as familyName, w.wonElections, w.party_id
 from with_party_name w left join party_family p on 
 w.party_id = p.party_id;
+
 
 DROP VIEW IF EXISTS find_election_date CASCADE;
 create view find_election_date as
