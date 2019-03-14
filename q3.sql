@@ -24,15 +24,14 @@ where e.election_id = w.election_id and e.votes = w.max_votes and
       e.party_id = p.id;
 
 
-DROP VIEW IF EXISTS wins_per_party CASCADE;
-CREATE VIEW wins_per_party AS
-SELECT num.party_id, party.country_id, num.num_of_winning as party_wins
+DROP VIEW IF EXISTS wins_per_party2 CASCADE;
+CREATE VIEW wins_per_party2 AS
+SELECT wins.party_id, party.country_id, wins.num_wins as party_wins
 FROM 
-    (SELECT winning_party.party_id, count(party.country_id) AS num_of_winning 
+    (SELECT winning_party.party_id, count(party.country_id) AS num_wins 
     FROM winning_party RIGHT JOIN party ON winning_party.party_id = party.id 
-    GROUP BY party_id) num  
-    LEFT JOIN party ON party.id= num.party_id;
-
+    GROUP BY party_id) wins
+        LEFT JOIN party ON party.id = wins.party_id;
 
 
 DROP VIEW IF EXISTS avg_wins_country CASCADE;
