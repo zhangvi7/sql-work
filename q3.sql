@@ -30,8 +30,8 @@ from winning_party RIGHT JOIN party ON winning_party.party_id = party.id
 group by party_id;
 
 DROP VIEW IF EXISTS wins_count_party CASCADE;
-CREATE VIEW wins_count_partyAS
-SELECT per_party.party_id, party.country_id, per_party.per_party_wins as party_wins
+CREATE VIEW wins_count_party AS
+SELECT count_party.party_id, party.country_id, count_party.per_party_wins as party_wins
 FROM count_party LEFT JOIN party ON party.id = count_party.party_id;
 
 
