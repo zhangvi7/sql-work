@@ -18,10 +18,6 @@ from election_full e
 where e.year >= 2001 and e.year <= 2016
 group by e.year, e.country_id;
 
-select e.country_id, e.year, avg(votes_cast::numeric / electorate::numeric) as ratio
-from election_full e
-where e.year >= 2001 and e.year <= 2016
-group by e.year, e.country_id;
 
 
 -- countries whose average election participation ratios during
@@ -43,15 +39,6 @@ WHERE EXISTS (
                 r.ratio < r2.ratio and
                 r.country_id = r2.country_id);
 
-select distinct country_id
-FROM ratios r
-WHERE EXISTS (
-        SELECT * 
-        FROM ratios r2
-        WHERE 
-                r.year > r2.year AND
-                r.ratio < r2.ratio and
-                r.country_id = r2.country_id);
                
 create view valid_countries as
 select *
@@ -62,21 +49,22 @@ where not exists (
     WHERE r.country_id = n.country_id
 );
 
-select *
-from ratios r
-where not exists (
-    SELECT *
-    FROM not_valid_countries n
-    WHERE r.country_id = n.country_id
-);
+
+-- the answer to the query 
+insert into q5 
+SELECT c.name AS countryName, 
+       v.year AS year, 
+        v.ratio AS participationRatio
+FROM valid_countries v, country c
+WHERE v.country_id = country.id;
 
 
 
-
-
-
-
-
+SELECT c.name AS countryName, 
+       v.year AS year, 
+        v.ratio AS participationRatio
+FROM valid_countries v, country c
+WHERE v.country_id = country.id;
 
 
      
