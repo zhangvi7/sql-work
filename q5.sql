@@ -54,7 +54,7 @@ from ratios r
 where not exists (
     SELECT *
     FROM not_valid_countries n
-    WHERE r.country_id = n.id
+    WHERE r.country_id = n.country_id
 );
 
 select *
@@ -62,7 +62,7 @@ from ratios r
 where not exists (
     SELECT *
     FROM not_valid_countries n
-    WHERE r.country_id = n.id
+    WHERE r.country_id = n.country_id
 );
 
 
