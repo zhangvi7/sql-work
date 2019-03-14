@@ -24,8 +24,8 @@ where e.election_id = w.election_id and e.votes = w.max_votes and
       e.party_id = p.id;
 
 
-DROP VIEW IF EXISTS wins_per_party2 CASCADE;
-CREATE VIEW wins_per_party2 AS
+DROP VIEW IF EXISTS wins_per_party CASCADE;
+CREATE VIEW wins_per_party AS
 SELECT wins.party_id, party.country_id, wins.num_wins as party_wins
 FROM 
     (SELECT winning_party.party_id, count(party.country_id) AS num_wins 
