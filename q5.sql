@@ -1,100 +1,56 @@
--- Participate
+SET search_path TO parlgov;
+drop table if exists q5 cascade;
 
-SET SEARCH_PATH TO parlgov;
-drop table if exists q3 cascade;
-
--- You must not change this table definition.
-
-create table q3(
-        countryName varchar(50),
-        year int,
-        participationRatio real
+CREATE TABLE q5 
+(
+    countryName          VARCHAR (50),
+    "year"               INT,
+    participationRatio   FLOAT
 );
 
--- You may find it convenient to do this for each of the views
--- that define your intermediate steps.  (But give them better names!)
-DROP VIEW IF EXISTS intermediate_step CASCADE;
-
--- Define views for your intermediate steps here.
-
--- If votes_cast empty, speculate from sum of election results
-DROP VIEW IF EXISTS election_full CASCADE;
-CREATE VIEW election_full AS 
-SELECT election.id, election.country_id, election.e_date, electorate,
-        (CASE WHEN votes_cast IS NOT NULL THEN votes_cast
-            ELSE (
-                    SELECT SUM(votes) 
-                    FROM election_result
-                    WHERE election_result.election_id = election.id)
-                END) 
-                    AS votes_cast
-FROM election;
 
 
--- Group by each country and year
-CREATE VIEW participation_ratio AS 
-SELECT EXTRACT(year FROM e_date) AS year, country_id, AVG(votes_cast::numeric / electorate::numeric) AS ratio
-FROM election_full
-WHERE e_date > '2001-01-01' AND e_date < '2016-12-31'
-GROUP BY year, country_id;
+-- Getting country name, election date, election participation ratio 
+CREATE VIEW countryElection AS
+SELECT country.name AS countryName, YEAR(e_date) AS "year", CAST(votes_cast/electorate AS FLOAT) AS electionPartRatio
+FROM election, country
+WHERE election.country_id = country.id;
 
--- countries whose average election participation ratios during
--- this period are monotonically non-decreasing (meaning that for Year Y and Year W, where at least
--- one election has happened in each of them, if Y < W, then the average participation in Year Y is
--- ≤ average participation in Year W)
 
---1) tuples only for countries with at least 1 election, 2) must be non-decreasing ratio over years
+-- Filtering countries only between 2001 and 2016
+CREATE VIEW countryRatio2001To2016 AS
+SELECT countryName, "year", ROUND(AVG(electionPartRatio), 2) as participationRatio
+FROM countryElection
+WHERE "year" > 2001 AND "year" <= 2016
+GROUP BY countryName, "year";
 
--- SELECT ID of countries not valid
-CREATE VIEW cid_not_valid AS
-SELECT DISTINCT country_id
-FROM participation_ratio
-WHERE EXISTS (
+
+-- Finding all of the countries that do not have their ratios monotonically increasing between 2001 and 2016
+-- Also do a chcek for if invalid countries is empty because there might be an error on their side that cannot fulfill a comparison with an empty table and result in nothing
+CREATE VIEW invalidCountries AS
+SELECT countryName
+FROM countryRatio2001To2016 cr1
+WHERE EXISTS
+    (
         SELECT * 
-        FROM participation_ratio p
-        WHERE 
-                participation_ratio.year > p.year AND
-                participation_ratio.ratio < p.ratio);
+        FROM countryRatio2001To2016 cr2
+        WHERE   cr1."year" > c2."year" AND 
+                cr1.participationRatio < cr2.participationRatio AND 
+                cr1.countryName = cr2.countryName
+    );
 
-SELECT DISTINCT country_id
-FROM participation_ratio
-WHERE EXISTS (
-        SELECT * 
-        FROM participation_ratio p
-        WHERE 
-                participation_ratio.year > p.year AND
-                participation_ratio.ratio < p.ratio);
 
--- SELECT ID of countries that are valid
-CREATE VIEW cid_valid AS
-SELECT id
-FROM country
-WHERE NOT EXISTS (
-        SELECT * 
-        FROM cid_not_valid
-        WHERE country.id = cid_not_valid.country_id
+-- Removing those invalid countries from the original list
+CREATE VIEW validCountries AS
+SELECT * 
+FROM countryRatio2001To2016 cr
+WHERE NOT EXISTS 
+(
+    SELECT * 
+    FROM invalidCountries ic
+    WHERE cr.countryName = ic.countryName
 );
 
-SELECT id
-FROM country
-WHERE NOT EXISTS (
-        SELECT * 
-        FROM cid_not_valid
-        WHERE country.id = cid_not_valid.country_id
-);
 
--- the answer to the query 
-insert into q3 
-SELECT country.name AS countryName, 
-        participation_ratio.year AS year, 
-        participation_ratio.ratio AS participationRatio
-FROM participation_ratio, country, cid_valid
-WHERE participation_ratio.country_id = country.id AND 
-        participation_ratio.country_id = cid_valid.id; 
-
-SELECT country.name AS countryName, 
-        participation_ratio.year AS year, 
-        participation_ratio.ratio AS participationRatio
-FROM participation_ratio, country, cid_valid
-WHERE participation_ratio.country_id = country.id AND 
-        participation_ratio.country_id = cid_valid.id; 
+INSERT INTO q5 (countryName, "year", participationRatio)
+SELECT * FROM validCountries;
